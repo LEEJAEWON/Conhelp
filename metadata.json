@@ -1,0 +1,5 @@
+{
+  "name": "Connection Helper Dashboard",
+  "description": "A sophisticated GUI wrapper for managing Docker containers and Traefik reverse proxy configurations, featuring real-time status monitoring and Gemini-powered configuration generation.",
+  "requestFramePermissions": []
+}
