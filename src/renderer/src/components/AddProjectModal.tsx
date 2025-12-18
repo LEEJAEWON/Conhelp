@@ -43,23 +43,23 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSubmit, th
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="text-[10px] font-bold uppercase text-slate-500 mb-2 block ml-1">Project Name</label>
-              <input 
+              <input
                 autoFocus
-                type="text" 
+                type="text"
                 className={`w-full px-5 py-3 rounded-2xl border outline-none focus:border-blue-500 transition-all ${inputBg}`}
                 placeholder="내 멋진 쇼핑몰"
                 value={formData.name}
-                onChange={e => setFormData({...formData, name: e.target.value})}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-[10px] font-bold uppercase text-slate-500 mb-2 block ml-1">Type</label>
-                <select 
+                <select
                   className={`w-full px-5 py-3 rounded-2xl border outline-none focus:border-blue-500 transition-all ${inputBg}`}
                   value={formData.type}
-                  onChange={e => setFormData({...formData, type: e.target.value as any})}
+                  onChange={e => setFormData({ ...formData, type: e.target.value as any })}
                 >
                   <option value="node">Node.js</option>
                   <option value="python">Python</option>
@@ -69,12 +69,12 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSubmit, th
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase text-slate-500 mb-2 block ml-1">Port</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   className={`w-full px-5 py-3 rounded-2xl border outline-none focus:border-blue-500 transition-all ${inputBg}`}
                   placeholder="3000"
                   value={formData.internalPort}
-                  onChange={e => setFormData({...formData, internalPort: parseInt(e.target.value)})}
+                  onChange={e => setFormData({ ...formData, internalPort: parseInt(e.target.value) })}
                 />
               </div>
             </div>
@@ -82,12 +82,12 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSubmit, th
             <div>
               <label className="text-[10px] font-bold uppercase text-slate-500 mb-2 block ml-1">Domain (.local)</label>
               <div className="relative">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className={`w-full px-5 py-3 rounded-2xl border outline-none focus:border-blue-500 transition-all ${inputBg}`}
                   placeholder="myshop"
                   value={formData.domain}
-                  onChange={e => setFormData({...formData, domain: e.target.value})}
+                  onChange={e => setFormData({ ...formData, domain: e.target.value })}
                 />
                 <span className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-xs">.local</span>
               </div>
@@ -96,24 +96,18 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSubmit, th
             <div>
               <label className="text-[10px] font-bold uppercase text-slate-500 mb-2 block ml-1">Source Path</label>
               <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  readOnly
-                  className={`flex-1 px-5 py-3 rounded-2xl border text-xs opacity-50 ${inputBg}`}
-                  placeholder="/users/dev/projects/..."
-                  value={formData.path || '폴더를 선택하세요'}
+                <input
+                  type="text"
+                  className={`flex-1 px-5 py-3 rounded-2xl border text-xs ${inputBg}`}
+                  placeholder="/absolute/path/to/project"
+                  value={formData.path}
+                  onChange={e => setFormData({ ...formData, path: e.target.value })}
                 />
-                <button 
-                  type="button"
-                  onClick={() => setFormData({...formData, path: `/mock/path/${formData.name || 'new-proj'}`})}
-                  className="px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl transition-colors"
-                >
-                  <i className="fas fa-folder-open"></i>
-                </button>
+
               </div>
             </div>
 
-            <button 
+            <button
               type="submit"
               className="w-full mt-4 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-[1.5rem] font-black text-sm shadow-xl shadow-blue-900/30 transition-all active:scale-95"
             >

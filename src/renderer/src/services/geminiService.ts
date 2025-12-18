@@ -1,8 +1,8 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { Project } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
 
 export const generateDockerConfig = async (project: Project) => {
   const prompt = `Generate a standard docker-compose.yml file for a ${project.type} project named "${project.name}". 

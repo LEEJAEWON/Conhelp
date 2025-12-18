@@ -13,29 +13,30 @@ const LogViewerModal: React.FC<LogViewerModalProps> = ({ project, onClose, theme
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 실시간 로그 시뮬레이션
-    const initialLogs = [
-      `[INFO] Starting project ${project.name}...`,
-      `[INFO] Building image proj-${project.id}:latest`,
-      `[SUCCESS] Image built successfully`,
-      `[INFO] Injecting Traefik labels for ${project.domain}`,
-      `[INFO] Container up and running`
-    ];
-    setLogs(initialLogs);
+    // Clear logs on open
+    setLogs([]);
 
-    const interval = setInterval(() => {
-      const messages = [
-        `GET / 200 OK (4ms)`,
-        `POST /api/data 201 Created (12ms)`,
-        `GET /static/bundle.js 304 Not Modified`,
-        `Worker process ${Math.floor(Math.random() * 1000)} handling request`,
-        `[DEBUG] Memory usage: ${Math.floor(Math.random() * 200 + 100)}MB`
-      ];
-      setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${messages[Math.floor(Math.random() * messages.length)]}`].slice(-100));
-    }, 2000);
+    const handleLog = (data: { projectId: string, msg: string }) => {
+      // Check if log belongs to this project
+      // Note: IPC sends projectId, but here we might not be filtering? 
+      // The IPC backend broadcasts to all windows. We should check ID.
+      if (typeof data === 'object' && data.projectId === project.id) {
+        setLogs(prev => [...prev, data.msg].slice(-200));
+      } else if (typeof data === 'string') {
+        // Fallback or system log
+        setLogs(prev => [...prev, data].slice(-200));
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [project]);
+    // Subscribing to log
+    // @ts-ignore
+    window.api.onLog(handleLog);
+
+    return () => {
+      // @ts-ignore
+      window.api.removeLogListener();
+    };
+  }, [project.id]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -63,20 +64,14 @@ const LogViewerModal: React.FC<LogViewerModalProps> = ({ project, onClose, theme
           </button>
         </div>
 
-        <div 
+        <div
           ref={scrollRef}
           className="flex-1 p-6 font-mono text-xs space-y-1 overflow-y-auto bg-black/40 custom-scrollbar"
         >
           {logs.map((log, i) => (
             <div key={i} className="flex gap-4 group">
               <span className="text-slate-700 shrink-0 select-none">{i + 1}</span>
-              <span className={`
-                ${log.includes('[INFO]') ? 'text-blue-400' : ''}
-                ${log.includes('[SUCCESS]') ? 'text-emerald-400' : ''}
-                ${log.includes('[DEBUG]') ? 'text-slate-500' : ''}
-                ${log.includes('[ERROR]') ? 'text-rose-400' : ''}
-                ${!log.includes('[') ? 'text-slate-300' : ''}
-              `}>
+              <span className={`break-words whitespace-pre-wrap ${theme === 'white' ? 'text-slate-700' : 'text-slate-300'}`}>
                 {log}
               </span>
             </div>
