@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Project, ThemeMode } from './types';
+import { Project, ThemeMode, ServiceStatus } from './types';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import ProjectList from './components/ProjectList';
@@ -116,7 +116,7 @@ const App: React.FC = () => {
   // System State fallback
   const safeSystemState = systemStatus || {
     docker: { running: false, version: '-' },
-    traefik: { status: 'STOPPED' as const, dashboardUrl: '', port80Available: false },
+    traefik: { status: ServiceStatus.STOPPED, dashboardUrl: '', port80Available: false },
     firewall: { active: false },
     projects: []
   };
@@ -137,58 +137,51 @@ const App: React.FC = () => {
 
   const themeStyles = useMemo(() => {
     switch (theme) {
-      case 'white': return { bg: 'bg-slate-50 text-slate-900', header: 'bg-white/80 border-slate-200 text-slate-800' };
-      case 'middle': return { bg: 'bg-slate-700 text-slate-50', header: 'bg-slate-800/80 border-slate-600 text-slate-100' };
-      default: return { bg: 'bg-slate-950 text-slate-100', header: 'bg-slate-900/50 border-slate-800 text-slate-100' };
+      case 'white': return { bg: 'bg-gray-50 text-gray-900', header: 'bg-white/95 border-gray-200 text-gray-900' };
+      case 'middle': return { bg: 'bg-slate-800 text-slate-50', header: 'bg-slate-900/95 border-slate-700 text-slate-100' };
+      default: return { bg: 'bg-[#0a0e1a] text-slate-100', header: 'bg-[#0f1419]/95 border-slate-800/50 text-slate-100' };
     }
   }, [theme]);
 
   return (
-    <div className={`flex h-screen transition-all duration-500 ease-in-out ${themeStyles.bg}`}>
+    <div className={`flex h-screen transition-colors duration-300 ${themeStyles.bg}`}>
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} />
 
       <main className="flex-1 flex flex-col overflow-hidden">
-        <header className={`h-16 border-b flex items-center justify-between px-8 backdrop-blur-md sticky top-0 z-30 transition-all ${themeStyles.header}`}>
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">
-              {activeTab === 'dashboard' ? '관제 센터' : activeTab === 'projects' ? '서비스 관리' : 'AI 아키텍처'}
-            </h2>
+        <header className={`h-16 border-b flex items-center justify-between px-6 backdrop-blur-xl sticky top-0 z-30 transition-colors duration-300 ${themeStyles.header}`}>
+          <div className="flex items-center gap-3">
+            <h1 className={`text-lg font-semibold tracking-tight ${theme === 'white' ? 'text-gray-900' : 'text-white'}`}>
+              {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'projects' ? 'Projects' : 'AI Assistant'}
+            </h1>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-4 text-[11px] font-mono">
-              <div className="flex items-center gap-2">
-                <span className={`w-1.5 h-1.5 rounded-full ${isScanning ? 'bg-amber-500 animate-ping' : safeSystemState.docker.running ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                <span className="opacity-60 uppercase">Docker</span>
-                <span className="text-blue-400">{safeSystemState.docker.running ? 'Connected' : 'Disconnected'}</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${theme === 'white' ? 'bg-gray-100' : 'bg-slate-800/50'}`}>
+                <span className={`w-2 h-2 rounded-full ${isScanning ? 'bg-amber-400 animate-pulse' : safeSystemState.docker.running ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+                <span className={`text-xs font-medium ${theme === 'white' ? 'text-gray-600' : 'text-slate-400'}`}>Docker</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`w-1.5 h-1.5 rounded-full ${safeSystemState.traefik.port80Available ? 'bg-green-500' : 'bg-rose-500'}`}></span>
-                <span className="opacity-60 uppercase">Port 80</span>
-                <span className={safeSystemState.traefik.port80Available ? 'text-emerald-400' : 'text-rose-400'}>
-                  {safeSystemState.traefik.port80Available ? 'AVAILABLE' : 'USED'}
-                </span>
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${theme === 'white' ? 'bg-gray-100' : 'bg-slate-800/50'}`}>
+                <span className={`w-2 h-2 rounded-full ${safeSystemState.traefik.port80Available ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+                <span className={`text-xs font-medium ${theme === 'white' ? 'text-gray-600' : 'text-slate-400'}`}>Port 80</span>
               </div>
             </div>
 
-            <div className="h-8 w-px bg-slate-700 mx-2"></div>
-
             <button
               onClick={cycleTheme}
-              className={`px-4 py-1.5 rounded-xl border font-bold text-[10px] uppercase tracking-wider flex items-center gap-2 transition-all hover:scale-105 active:scale-95 ${theme === 'white'
-                  ? 'bg-slate-100 border-slate-300 text-slate-700'
+              className={`p-2 rounded-lg transition-all hover:scale-105 active:scale-95 ${theme === 'white'
+                  ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                   : theme === 'middle'
-                    ? 'bg-slate-600 border-slate-500 text-white'
-                    : 'bg-slate-800 border-slate-700 text-slate-300'
+                    ? 'bg-slate-700 hover:bg-slate-600 text-slate-200'
+                    : 'bg-slate-800/50 hover:bg-slate-700 text-slate-300'
                 }`}
             >
-              <i className={`fas ${theme === 'white' ? 'fa-sun' : theme === 'middle' ? 'fa-circle-half-stroke' : 'fa-moon'}`}></i>
-              Mode
+              <i className={`fas ${theme === 'white' ? 'fa-sun' : theme === 'middle' ? 'fa-circle-half-stroke' : 'fa-moon'} text-sm`}></i>
             </button>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar relative">
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar relative">
           {activeTab === 'dashboard' && <Dashboard state={dashboardState} logs={dashboardLogs} theme={theme} onScan={runSystemCheck} isScanning={isScanning} />}
           {activeTab === 'projects' && (
             <ProjectList
@@ -229,12 +222,10 @@ const App: React.FC = () => {
       )}
 
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: ${theme === 'white' ? '#cbd5e1' : '#334155'}; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: ${theme === 'white' ? '#94a3b8' : '#475569'}; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: ${theme === 'white' ? '#d1d5db' : '#334155'}; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: ${theme === 'white' ? '#9ca3af' : '#475569'}; }
       `}</style>
     </div>
   );

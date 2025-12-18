@@ -17,60 +17,61 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, theme }) => 
 
   const getSidebarClasses = () => {
     switch (theme) {
-      case 'white': return 'bg-slate-100 border-slate-200 text-slate-800';
-      case 'middle': return 'bg-slate-800 border-slate-700 text-slate-100';
-      case 'dark': default: return 'bg-slate-900 border-slate-800 text-slate-100';
+      case 'white': return 'bg-white border-gray-200 text-gray-900';
+      case 'middle': return 'bg-slate-900 border-slate-800 text-slate-100';
+      case 'dark': default: return 'bg-[#0f1419] border-slate-800/50 text-slate-100';
     }
   };
 
   const getButtonClasses = (isActive: boolean) => {
     if (isActive) {
-      return 'bg-blue-600/10 text-blue-500 border border-blue-600/20';
+      return theme === 'white'
+        ? 'bg-blue-50 text-blue-600 font-medium'
+        : 'bg-blue-500/10 text-blue-400 font-medium';
     }
     return theme === 'white' 
-      ? 'text-slate-600 hover:bg-slate-200 hover:text-slate-900' 
-      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200';
+      ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' 
+      : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200';
   };
 
   return (
     <aside className={`w-64 border-r flex flex-col transition-colors duration-300 ${getSidebarClasses()}`}>
-      {/* 높이를 h-16으로 고정하여 헤더의 구분선과 높이를 일치시킴 */}
-      <div className={`h-16 px-6 flex items-center gap-3 border-b transition-colors duration-300 ${theme === 'white' ? 'border-slate-200' : 'border-slate-800'}`}>
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/20">
-          <i className="fas fa-network-wired text-white text-base"></i>
+      <div className={`h-16 px-5 flex items-center gap-3 border-b transition-colors duration-300 ${theme === 'white' ? 'border-gray-200' : 'border-slate-800/50'}`}>
+        <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <i className="fas fa-network-wired text-white text-sm"></i>
         </div>
-        <span className="font-bold text-lg tracking-tight">CONN_HELP</span>
+        <span className="font-bold text-base tracking-tight">ConHelper</span>
       </div>
 
-      <nav className="flex-1 px-4 py-6 space-y-2">
+      <nav className="flex-1 px-3 py-4 space-y-1">
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id as any)}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${getButtonClasses(activeTab === item.id)}`}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${getButtonClasses(activeTab === item.id)}`}
           >
-            <i className={`fas ${item.icon} w-5`}></i>
-            <span className="font-medium">{item.label}</span>
+            <i className={`fas ${item.icon} w-4 text-sm`}></i>
+            <span className="text-sm">{item.label}</span>
           </button>
         ))}
       </nav>
 
-      <div className="p-4 mt-auto">
-        <div className={`rounded-2xl p-4 border transition-colors duration-300 ${
-          theme === 'white' ? 'bg-white border-slate-200' : 'bg-slate-800/50 border-slate-700/50'
+      <div className="p-3 mt-auto space-y-3">
+        <div className={`rounded-xl p-3 border transition-colors duration-300 ${
+          theme === 'white' ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100' : 'bg-gradient-to-br from-blue-500/5 to-indigo-500/5 border-blue-500/10'
         }`}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-indigo-500/20 rounded-lg">
-              <i className="fas fa-brain text-indigo-400 text-sm"></i>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-1.5 bg-blue-500/10 rounded-lg">
+              <i className="fas fa-sparkles text-blue-500 text-xs"></i>
             </div>
-            <span className={`text-xs font-semibold uppercase tracking-wider ${theme === 'white' ? 'text-slate-600' : 'text-slate-300'}`}>Gemini 통합</span>
+            <span className={`text-xs font-semibold ${theme === 'white' ? 'text-gray-700' : 'text-slate-300'}`}>AI Powered</span>
           </div>
-          <p className={`text-[10px] leading-relaxed ${theme === 'white' ? 'text-slate-500' : 'text-slate-500'}`}>
-            AI 기반 구성 및 문제 해결 기능이 모든 연결된 프로젝트에 대해 활성화되어 있습니다.
+          <p className={`text-[10px] leading-relaxed ${theme === 'white' ? 'text-gray-600' : 'text-slate-400'}`}>
+            Gemini AI로 구성 자동화 및 문제 해결
           </p>
         </div>
-        <div className="mt-4 flex items-center gap-3 px-4 py-2 opacity-50">
-          <span className="text-[10px] font-mono">v1.1.0-STABLE</span>
+        <div className={`px-3 py-2 text-[10px] font-mono ${theme === 'white' ? 'text-gray-400' : 'text-slate-600'}`}>
+          v1.1.0
         </div>
       </div>
     </aside>
